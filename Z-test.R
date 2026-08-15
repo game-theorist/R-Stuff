@@ -2,7 +2,7 @@
 
 sample_data <- c()
 
-alpha <- 
+alpha <-
 
 mu <- 
 
