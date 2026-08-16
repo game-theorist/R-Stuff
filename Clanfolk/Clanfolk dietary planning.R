@@ -13,7 +13,7 @@ vegetable_yield <- 6
 
 harvests_per_year <- 3
 
-#livestock data wrangling
+# Livestock data wrangling
 
 clanfolk_livestock <- livestock_output |>
   #cleaning the tibble
@@ -41,28 +41,38 @@ pig <- clanfolk_livestock |>
   filter(animal == "pig_adult")
 
 
-# ingredients per day per clanfolk
-
-clanfolk_n <- 14
-
-clanfolk_fast_metabolism <- 3
-
-clanfolk_slow_metabolism <- 2
+# Ingredients per day per clanfolk
 
 extra_nutrition_necessity <- 1
 
-#desired_dishes <- c("hearty_stew")
+# Tibble of eaters
 
-nutrition_necessity_per_day <- clanfolk_n * 1800 * (5 + (clanfolk_fast_metabolism * 2) - (clanfolk_slow_metabolism * 2) + extra_nutrition_necessity)
+eaters <- tribble(
+  ~"dish", ~"normal_eater", ~"fast_eater", ~"slow_eater",
+  "hearty_stew", 1, 1, 1,
+  "fish_stew", 2, 2, 2,
+  "haggis", 0, 0, 0,
+  "haggis_and_neeps", 1, 1, 1
+  )
+
+nutrition_need_per_day <- eaters |> 
+  mutate(total_nutrition_need = 1800 * ((sum(normal_eater) * (5 + extra_nutrition_necessity)) + (sum(fast_eater) * (7 + extra_nutrition_necessity)) + (sum(slow_eater) * (3 + extra_nutrition_necessity)))
+  ) |> 
+  pull()
 
 ingredients_per_day <- clanfolk_recipes |> 
-  #filter(dish == desired_dishes) |> 
-  mutate(dishes_needed_per_day = (nutrition_necessity_per_day / nutrition_per_unit),
+  left_join(eaters, by = "dish") |> 
+  rowwise() |> 
+  mutate(dish_needed_nutrition = 
+           1800 * ((normal_eater * (5 + extra_nutrition_necessity)) + (fast_eater * (7 + extra_nutrition_necessity)) + (slow_eater * (3 + extra_nutrition_necessity))),
          .after = "dish"
+         ) |> 
+  mutate(dish_needed_per_day = (dish_needed_nutrition / nutrition_per_unit),
+         .after = "dish_needed_nutrition"
   ) |> 
-  mutate(across(!c(dish, nutrition_per_unit, dishes_needed_per_day),
-                ~ .x * dishes_needed_per_day)) |>
-  #plants
+  mutate(across(!c(dish, nutrition_per_unit, dish_needed_per_day),
+                ~ .x * dish_needed_per_day)) |>
+  # Plants
   mutate(across(oat_grain,
                 ~ (.x / (grain_yield * harvests_per_year / 40)),
                 .names = "{str_remove(.col, '_grain')}_plants"),
@@ -71,11 +81,11 @@ ingredients_per_day <- clanfolk_recipes |>
                 .names = "{.col}_plants")
   ) |> 
   remove_empty("cols") |>
-  #animals
+  # Animals
   mutate(pig_females_pluck = (pluck / pig$pluck_per_day_per_female),
          pig_females_meat = (raw_meat / pig$meat_per_day_per_female)
          ) |> 
-  select(!c(nutrition_per_unit))
+  select(!c(nutrition_per_unit, dish_needed_nutrition, normal_eater, fast_eater, slow_eater))
 
 ingredients_per_day
 
