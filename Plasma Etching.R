@@ -1,9 +1,10 @@
 #Plasma Etching
 
+library(tidyverse)
 
 #Tibble making
 
-sample_data <- tribble(~"power",
+sample_data <- tribble(~"treatment",
                        ~"etch_rate",
                        ~"etch_rate",
                        ~"etch_rate",
@@ -42,7 +43,7 @@ raw_tribble <- sample_data |>
                names_to = NULL,
                values_to = "etch_rate"
   )|> 
-  mutate(power = as.factor(`power`), .before = 1)
+  mutate(treatment = as.factor(`treatment`), .before = 1)
 
 
 #ANOVA summary
@@ -53,7 +54,7 @@ n <- raw_tribble |>
   ) |> 
   pull()
 
-levels <- length(unique(raw_tribble$power))
+levels <- length(unique(raw_tribble$treatment))
 
 total_mean <- raw_tribble |>
   summarize(
@@ -61,7 +62,7 @@ total_mean <- raw_tribble |>
   pull()
 
 sample_tribble <- raw_tribble |>
-  group_by(power) |> 
+  group_by(treatment) |> 
   mutate(
     treatment_mean = mean(etch_rate),
     treatment_n = n(),
@@ -71,7 +72,7 @@ sample_tribble <- raw_tribble |>
   ungroup()
 
 summarized_tribble <- sample_tribble |>
-  group_by(power) |> 
+  group_by(treatment) |> 
   summarize(
     treatment_mean = mean(etch_rate),
     treatment_n = n(),

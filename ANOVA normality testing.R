@@ -24,8 +24,9 @@ plot_run_order <- residuals |>
   geom_point()
 
 plot_versus_fitted <- residuals |> 
-  ggplot(aes(x = measurement, y = residual)) +
-  geom_dotplot()
+  ggplot(aes(x = residual, y = observed_value)) +
+  geom_jitter() + 
+  geom_smooth(method = "lm", se = FALSE)
 
 plot_residuals + plot_scaled_residuals
 

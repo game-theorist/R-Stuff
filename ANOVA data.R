@@ -1,86 +1,77 @@
 #Tibble making
 
-sample_data <- tribble(~"Estimation Method",
-                       ~"Observations",
-                       ~"Observations",
-                       ~"Observations",
-                       ~"Observations",
-                       ~"Observations",
-                       ~"Observations",
+library(tidyverse)
+library(labelled)
+
+sample_data <- tribble(~"treatment", ~"values", ~"values", ~"values", ~"values", ~"values", ~"values",
                        1,
-                       0.34,
-                       0.12,
-                       1.23,
-                       0.70,
-                       1.75,
-                       0.12,
-                       2,
-                       0.91,
-                       2.94,
-                       2.14,
-                       2.36,
-                       2.86,
-                       4.55,
-                       3,
-                       6.31,
-                       8.37,
-                       9.75,
-                       6.09,
-                       9.82,
-                       7.24,
-                       4,
-                       17.15,
-                       11.82,
-                       10.95,
-                       17.20,
-                       14.35,
-                       16.82
-)
+                       4.93(0.05),
+                       4.86(0.04),
+                       4.75(0.05),
+                       4.95(0.06),
+                       4.79(0.03),
+                       4.88(0.05),
+                       2
+                       4.85(0.04)
+                       4.91(0.02)
+                       4.79(0.03)
+                       4.85(0.05)
+                       4.75(0.03)
+                       4.85(0.02)
+                       3
+                       4.83(0.09)
+                       4.88(0.13)
+                       4.90(0.11)
+                       4.75(0.15)
+                       4.82(0.08)
+                       4.90(0.12)
+                       4
+                       4.89(0.03)
+                       4.77(0.04)
+                       4.94(0.05)
+                       4.86(0.05)
+                       4.79(0.03)
+                       4.76(0.02)
+) 
 
 sample_data
 
 raw_tribble <- sample_data |> 
-  pivot_longer(cols = "Observations",
+  pivot_longer(cols = "values",
                names_to = NULL,
-               values_to = "measurement"
+               values_to = "observed_value"
   )|> 
-  mutate(Method = as.factor(`Estimation Method`), .before = 1) |> 
-  mutate(`Estimation Method` = NULL)
+  mutate(treatment = as.factor(treatment), .before = 1) |> 
+  set_variable_labels(
+    treatment = "Display Design",
+    observed_value = "Percent Increase in Sales"
+    
+  )
 
 
 #ANOVA summary
 
 n <- raw_tribble |> 
   summarize(
-    n = n()
+    m = n()
   ) |> 
   pull()
 
-levels <- length(unique(sample_tribble$Method))
+levels <- length(unique(raw_tribble$treatment))
 
 total_mean <- raw_tribble |>
   summarize(
-    total_mean = mean(measurement)) |> 
+    total_mean = mean(observed_value)) |> 
   pull()
 
-sample_tribble <- raw_tribble |>
-  group_by(Method) |> 
-  mutate(
-    treatment_mean = mean(measurement),
-    treatment_n = n(),
-    treatment_sd = sd(measurement),
-    treatment_variance = var(measurement),
-    treatment_median = median(measurement)) |> 
-  ungroup()
-
-summarized_tribble <- sample_tribble |>
-  group_by(Method) |> 
+summarized_tribble <- raw_tribble |>
+  group_by(treatment) |> 
   summarize(
-    treatment_mean = mean(measurement),
+    treatment_mean = mean(observed_value),
     treatment_n = n(),
-    treatment_sd = sd(measurement),
-    treatment_variance = var(measurement),
-    treatment_median = median(measurement))
+    treatment_sd = sd(observed_value),
+    treatment_variance = var(observed_value),
+    treatment_median = median(observed_value))
   
 
 summarized_tribble
@@ -93,7 +84,7 @@ balanced_data <- length(unique(summarized_tribble$treatment_n)) == 1
 
 if(balanced_data) {
   sum_squares_treatment <- (n / levels) * (sum(((summarized_tribble$treatment_mean - total_mean) ^ 2)))
-  sum_squares_total <- sum((sample_tribble$measurement - total_mean) ^ 2)
+  sum_squares_total <- sum((raw_tribble$observed_value - total_mean) ^ 2)
   sum_squares_error <- sum_squares_total - sum_squares_treatment
 #this part needs correction
   } else {
@@ -114,8 +105,8 @@ f_statistic <- mean_squares_treatment / mean_squares_error
 
 #Residuals
 
-residuals <- sample_tribble |> 
-  mutate(residual = measurement - treatment_mean) |> 
+residuals <- raw_tribble |> 
+  mutate(residual = observed_value - treatment_mean) |> 
   mutate(scaled_residual = residual / sqrt(mean_squares_error)) |>
-  mutate(levene_deviation = abs(measurement - treatment_median)) |> 
-  select(measurement, residual, scaled_residual, levene_deviation)
+  mutate(levene_deviation = abs(observed_value - treatment_median)) |> 
+  select(treatment, observed_value, residual, scaled_residual, levene_deviation)
