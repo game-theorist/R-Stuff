@@ -7,8 +7,8 @@ library(patchwork)
 
 plot_residuals <- residuals |> 
   ggplot(aes(sample = residual)) +
-  stat_pp_point() +
-  stat_pp_line(color = "red") +
+  stat_qq_point() +
+  stat_qq_line(color = "red") +
   coord_flip() +
   theme_bw()
 
@@ -19,18 +19,21 @@ plot_scaled_residuals <- residuals |>
   coord_flip() +
   theme_bw()
 
-plot_run_order <- residuals |> 
-  ggplot(aes(x = test_sequence, y = residual)) +
-  geom_point()
-
-plot_versus_fitted <- residuals |> 
-  ggplot(aes(x = residual, y = observed_value)) +
-  geom_jitter() + 
+plot_residuals_versus_fitted_means <- residuals |> 
+  ggplot(aes(x = treatment_mean, y = residual)) +
+  geom_jitter(width = 0, height = 0.5) +
   geom_smooth(method = "lm", se = FALSE)
 
-plot_residuals + plot_scaled_residuals
+plot_residuals_versus_treatment <- residuals |> 
+  ggplot(aes(x = treatment, y = residual)) +
+  geom_jitter(width = 0, height = 0.5) +
+  geom_hline(yintercept = 0, color = "blue", linewidth = 1)
 
-plot_run_order + plot_versus_fitted
+plot_residuals + plot_scaled_residuals + plot_residuals_versus_fitted_means + plot_residuals_versus_treatment
+
+#plot_run_order <- residuals |> 
+ # ggplot(aes(x = test_sequence, y = residual)) +
+  #geom_point()
 
 #Bartlet's test
 

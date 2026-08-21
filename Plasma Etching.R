@@ -5,11 +5,11 @@ library(tidyverse)
 #Tibble making
 
 sample_data <- tribble(~"treatment",
-                       ~"etch_rate",
-                       ~"etch_rate",
-                       ~"etch_rate",
-                       ~"etch_rate",
-                       ~"etch_rate",
+                       ~"values",
+                       ~"values",
+                       ~"values",
+                       ~"values",
+                       ~"values",
                        160,
                        575,
                        542,
@@ -39,9 +39,9 @@ sample_data <- tribble(~"treatment",
 sample_data
 
 raw_tribble <- sample_data |> 
-  pivot_longer(cols = "etch_rate",
+  pivot_longer(cols = "values",
                names_to = NULL,
-               values_to = "etch_rate"
+               values_to = "observed_value"
   )|> 
   mutate(treatment = as.factor(`treatment`), .before = 1)
 
@@ -58,27 +58,27 @@ levels <- length(unique(raw_tribble$treatment))
 
 total_mean <- raw_tribble |>
   summarize(
-    total_mean = mean(etch_rate)) |> 
+    total_mean = mean(observed_value)) |> 
   pull()
 
 sample_tribble <- raw_tribble |>
   group_by(treatment) |> 
   mutate(
-    treatment_mean = mean(etch_rate),
+    treatment_mean = mean(observed_value),
     treatment_n = n(),
-    treatment_sd = sd(etch_rate),
-    treatment_variance = var(etch_rate),
-    treatment_median = median(etch_rate)) |> 
+    treatment_sd = sd(observed_value),
+    treatment_variance = var(observed_value),
+    treatment_median = median(observed_value)) |> 
   ungroup()
 
 summarized_tribble <- sample_tribble |>
   group_by(treatment) |> 
   summarize(
-    treatment_mean = mean(etch_rate),
+    treatment_mean = mean(observed_value),
     treatment_n = n(),
-    treatment_sd = sd(etch_rate),
-    treatment_variance = var(etch_rate),
-    treatment_median = median(etch_rate))
+    treatment_sd = sd(observed_value),
+    treatment_variance = var(observed_value),
+    treatment_median = median(observed_value))
 
 
 summarized_tribble
@@ -91,7 +91,7 @@ balanced_data <- length(unique(summarized_tribble$treatment_n)) == 1
 
 if(balanced_data) {
   sum_squares_treatment <- (n / levels) * (sum(((summarized_tribble$treatment_mean - total_mean) ^ 2)))
-  sum_squares_total <- sum((sample_tribble$etch_rate - total_mean) ^ 2)
+  sum_squares_total <- sum((sample_tribble$observed_value - total_mean) ^ 2)
   sum_squares_error <- sum_squares_total - sum_squares_treatment
   #this part needs correction
 } else {
@@ -113,7 +113,7 @@ f_statistic <- mean_squares_treatment / mean_squares_error
 #Residuals
 
 residuals <- sample_tribble |> 
-  mutate(residual = etch_rate - treatment_mean) |> 
+  mutate(residual = observed_value - treatment_mean) |> 
   mutate(scaled_residual = residual / sqrt(mean_squares_error)) |>
-  mutate(levene_deviation = abs(etch_rate - treatment_median)) |> 
-  select(etch_rate, residual, scaled_residual, levene_deviation)
+  mutate(levene_deviation = abs(observed_value - treatment_median)) |> 
+  select(observed_value, residual, scaled_residual, levene_deviation)
