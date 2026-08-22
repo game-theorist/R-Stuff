@@ -41,7 +41,10 @@ summarized_tribble <- raw_tribble |>
 summarized_tribble
 
 diff_in_means <- summarized_tribble |> 
-  summarize(diff = treatment_n - )
+  reframe(diff = treatment_mean - lead(treatment_mean)
+          ) |> 
+  drop_na() |> 
+  pull()
 
 #Testing for variances
 
