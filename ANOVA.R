@@ -8,11 +8,7 @@ side <- "two_sided"
 
 #P-value calculation
 
-lower_tail <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = TRUE)
-
-upper_tail <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = FALSE)
-
-p_value <- pmin(lower_tail, upper_tail)
+p_value <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = FALSE)
 
 #Confidence Interval
 
@@ -26,10 +22,10 @@ treatment_mean_ci_upper <- summarized_tribble$treatment_mean + t_critical * sqrt
 
 confidence_interval <- summarized_tribble |>
   mutate(
-    conf_lower = treatment_mean - t_critical * sqrt(mean_squares_error / treatment_n),
-    conf_upper = treatment_mean + t_critical * sqrt(mean_squares_error / treatment_n)
+    treatment_mean_lower = treatment_mean - t_critical * sqrt(mean_squares_error / treatment_n),
+    treatment_mean_upper = treatment_mean + t_critical * sqrt(mean_squares_error / treatment_n)
   ) |> 
-  select(treatment, treatment_mean, conf_lower, conf_upper, treatment_effect)
+  select(treatment, treatment_mean, treatment_mean_lower, treatment_mean_upper, treatment_effect)
   
 #Tukey's HSD
 

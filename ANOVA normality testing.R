@@ -38,29 +38,23 @@ plot_residuals + plot_scaled_residuals + plot_residuals_versus_fitted_means + pl
 #Bartlet's test
 
 variance_pop <- summarized_tribble |> 
-  summarize(variance_pop = sum((group_n - 1) * treatment_variance) / (n - levels)) |> 
+  summarize(variance_pop = sum((treatment_n - 1) * treatment_variance) / (n - levels)) |> 
   pull()
 
 q <- summarized_tribble |> 
-  summarize(q = (n - levels) * log10(variance_pop) - sum((group_n - 1) * log10(treatment_variance))) |> 
+  summarize(q = (n - levels) * log10(variance_pop) - sum((treatment_n - 1) * log10(treatment_variance))) |> 
   pull()
 
 c <- summarized_tribble |> 
-  summarize(c = 1 + (1 / (3 * (levels - 1)) * (sum( 1 / (group_n - 1)) - (1 / (n - levels))))) |> 
+  summarize(c = 1 + (1 / (3 * (levels - 1)) * (sum( 1 / (treatment_n - 1)) - (1 / (n - levels))))) |> 
   pull()
 
 bartlet_chisq <- 2.3026 * (q / c)
 
-degrees_of_freedom <- levels - 1
+bartlet_df <- levels - 1
 
-p_value <- pchisq(bartlet_chisq, df = degrees_of_freedom, lower.tail = FALSE)
+bartlet_p_value <- pchisq(bartlet_chisq, df = bartlet_df, lower.tail = FALSE)
 
 #Levene deviation test
 
-lower_tail <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = TRUE)
-
-upper_tail <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = FALSE)
-
-p_value <- case_when(side == "two_sided" ~ 2 * pmin(lower_tail, upper_tail),
-                     side == "less" ~ lower_tail,
-                     side == "greater" ~ upper_tail)
+levene_p_value <- pf(f_statistic, df1 = df_treatment, df2 = df_error, lower.tail = FALSE)

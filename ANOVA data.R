@@ -1,48 +1,19 @@
-#Tibble making
+#ANOVA data
 
 library(tidyverse)
 library(labelled)
 
-sample_data <- tribble(~"treatment",
-                       ~"values",
-                       ~"values",
-                       ~"values",
-                       ~"values",
-                       ~"values",
-                       1,
-                       19,
-                       20,
-                       19,
-                       30,
-                       8,
-                       2,
-                       80,
-                       61,
-                       73,
-                       56,
-                       80,
-                       3,
-                       47,
-                       26,
-                       25,
-                       35,
-                       50,
-                       4,
-                       95,
-                       46,
-                       83,
-                       78,
-                       97
-)
-
-sample_data
+#Cleaning tribble
 
 raw_tribble <- sample_data |> 
   pivot_longer(cols = "values",
                names_to = NULL,
                values_to = "observed_value"
   )|> 
-  mutate(treatment = as.factor(treatment), .before = 1) 
+  mutate(treatment = as.factor(treatment), .before = 1
+         #optional data transformation
+         #,observed_value = sqrt(observed_value)
+) 
 
 #ANOVA summary
 

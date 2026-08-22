@@ -6,9 +6,11 @@
 
 # Hypotheses example: mu1 = mu2 -> c1 = 1, c2 = -1
 
+contrast_df <- n - levels
+
 # H01: mu1 = mu2
 
-constants_h01 <- c(1, -2, 1)
+constants_h01 <- c(1, -3, 1, 1)
 
 constrast_h01 <- (sum(constants_h01 * summarized_tribble$treatment_mean))
 
@@ -16,17 +18,15 @@ sum_squares_constrast_h01 <- (constrast_h01 ^ 2) / (sum(constants_h01 ^ 2)/ summ
 
 f_constrast_h01 <- sum_squares_constrast_h01 / mean_squares_error
 
-lower_tail <- pf(f_constrast_h01, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
+#lower_tail <- pf(f_constrast_h01, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
 
-upper_tail <- pf(f_constrast_h01, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
+#upper_tail <- pf(f_constrast_h01, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
 
-p_value_constrast_h01 <- case_when(side == "two_sided" ~ 2 * pmin(lower_tail, upper_tail),
-                                   side == "less" ~ lower_tail,
-                                   side == "greater" ~ upper_tail)
+p_value_constrast_h01 <- pf(f_constrast_h01, df1 = 1, df2 = contrast_df, lower.tail = FALSE)
 
 #H02: mu1 + mu2 = mu3 + mu4
 
-constants_h02 <- c(1, 1, 0)
+constants_h02 <- c(1, 1, 0, 0)
 
 constrast_h02 <- (sum(constants_h02 * summarized_tribble$treatment_mean))
 
@@ -34,18 +34,16 @@ sum_squares_constrast_h02 <- (constrast_h02 ^ 2) / (sum(constants_h02 ^ 2)/ summ
 
 f_constrast_h02 <- sum_squares_constrast_h02 / mean_squares_error
 
-lower_tail <- pf(f_constrast_h02, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
+#lower_tail <- pf(f_constrast_h02, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
 
-upper_tail <- pf(f_constrast_h02, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
+#upper_tail <- pf(f_constrast_h02, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
 
-p_value_constrast_h02 <- case_when(side == "two_sided" ~ 2 * pmin(lower_tail, upper_tail),
-                                   side == "less" ~ lower_tail,
-                                   side == "greater" ~ upper_tail)
+p_value_constrast_h02 <- pf(f_constrast_h02, df1 = 1, df2 = contrast_df, lower.tail = FALSE)
 
 
 #H03: mu3 = mu4
 
-constants_h03 <- c(0, 0, 0)
+constants_h03 <- c(0, 0, 0, 0)
 
 constrast_h03 <- (sum(constants_h03 * summarized_tribble$treatment_mean))
 
@@ -53,13 +51,11 @@ sum_squares_constrast_h03 <- (constrast_h03 ^ 2) / (sum(constants_h03 ^ 2)/ summ
 
 f_constrast_h03 <- sum_squares_constrast_h03 / mean_squares_error
 
-lower_tail <- pf(f_constrast_h03, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
+#lower_tail <- pf(f_constrast_h03, df1 = 1, df2 = degrees_of_freedom, lower.tail = TRUE)
 
-upper_tail <- pf(f_constrast_h03, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
+#upper_tail <- pf(f_constrast_h03, df1 = 1, df2 = degrees_of_freedom, lower.tail = FALSE)
 
-p_value_constrast_h03 <- case_when(side == "two_sided" ~ 2 * pmin(lower_tail, upper_tail),
-                                   side == "less" ~ lower_tail,
-                                   side == "greater" ~ upper_tail)
+p_value_constrast_h03 <- pf(f_constrast_h03, df1 = 1, df2 = contrast_df, lower.tail = FALSE)
 
 #Results
 
