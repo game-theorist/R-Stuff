@@ -4,50 +4,37 @@ library(tidyverse)
 library(labelled)
 
 sample_data <- tibble(
-  values = c(1,
-             3,
+  values = c(
              7,
              6,
-             2,
-             6,
+             
+             3,
+             3,
+             
+             3,
+             5,
+             
+             4,
+             3,
+             
              8,
-             9,
-             1,
-             5,
-             5,
-             5,
+             8,
+             
              3,
-             3,
-             9,
-             7,
-             5,
              2,
+             
+             2,
+             4,
+             
+             9,
+             9,
+             
              5,
              4,
-             1,
-             1,
-             8,
-             6,
-             5,
-             6,
-             6,
-             8,
-             2,
-             8,
+             
              4,
-             5,
-             3,
-             2,
-             6,
-             8,
-             5,
-             3,
-             7,
-             7),
-  treatment = rep_len(c(10,
-                        10,
-                        20,
-                        20), length(values)),
+             5),
+  treatment = rep_len(c("Tip 1", "Tip 2"), length(values)),
 
 ) |> 
   relocate(treatment) |> 

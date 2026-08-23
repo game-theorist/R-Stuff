@@ -31,20 +31,14 @@ total_mean <- raw_tribble |>
 summarized_tribble <- raw_tribble |>
   group_by(treatment) |> 
   summarize(
-    treatment_mean = mean(observed_value, na.rm = TRUE),
-    treatment_effect = treatment_mean - total_mean,
     treatment_n = sum(!is.na(observed_value)),
+    treatment_mean = mean(observed_value, na.rm = TRUE),
+    treatment_median = median(observed_value, na.rm = TRUE),
+    treatment_min = min(observed_value),
+    treatment_max = max(observed_value),
     treatment_sd = sd(observed_value, na.rm = TRUE),
-    treatment_variance = var(observed_value, na.rm = TRUE),
-    treatment_median = median(observed_value, na.rm = TRUE))
-
-summarized_tribble
-
-diff_in_means <- summarized_tribble |> 
-  reframe(diff = treatment_mean - lead(treatment_mean)
-          ) |> 
-  drop_na() |> 
-  pull()
+    treatment_variance = var(observed_value, na.rm = TRUE)
+   )
 
 #Testing for variances
 
