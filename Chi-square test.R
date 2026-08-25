@@ -1,4 +1,4 @@
-chisq_table <- chisq_sample |> 
+chisq_tribble <- summarized_tribble |> 
   summarize(
     chisq_statistic = sum(chisq_fraction),
     df = (levels_treatment - 1) * (levels_response - 1),
@@ -7,23 +7,23 @@ chisq_table <- chisq_sample |>
 
 #Plots
 
-bar_plot <- chisq_sample |> 
+bar_plot <- raw_tribble |> 
   ggplot(aes(x = treatment, y = count, fill = response)) +
   geom_col()
 
-stacked_bar_plot <- chisq_sample |> 
+stacked_bar_plot <- raw_tribble |> 
   ggplot(aes(x = treatment, y = count, fill = response)) +
   geom_col(position = "fill")
 
-chisq_distribution <- chisq_table |> 
+chisq_distribution <- chisq_tribble |> 
   ggplot() +
-  stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_table$df"))),
-                xlim = c(eval(parse(text = "chisq_table$chisq_statistic")), 30),
+  stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_tribble$df"))),
+                xlim = c(eval(parse(text = "chisq_tribble$chisq_statistic")), 30),
                 geom = "area", 
                 fill = "tomato", 
                 alpha = 0.5
                 ) +
-  stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_table$df"))), linewidth = 1, color = "blue") +
+  stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_tribble$df"))), linewidth = 1, color = "blue") +
   geom_vline(aes(xintercept = chisq_statistic), color = "red", linetype = "dashed", linewidth = 1) +
   scale_x_continuous(limits = c(0, 30))
 
@@ -33,6 +33,6 @@ chisq_distribution <- chisq_table |>
 
 #Results
 
-chisq_sample
+raw_tribble
 
-chisq_table
+chisq_tribble
