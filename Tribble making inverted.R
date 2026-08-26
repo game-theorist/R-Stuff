@@ -5,28 +5,22 @@ library(labelled)
 
 sample_data <- tibble(
   values = c(
-             39.7,
-             52.9,
-             59.1,
-             56.7,
-             56.1,
-             61.9,
-             57.7,
-             71.4,
-             60.6,
-             67.7,
-             37.8,
-             50.0,
-             58.2,
-             60.7,
-             33.6,
-             51.3,
-             56.0,
-             59.5,
-             65.3,
-             59.8
+             21.3,
+             18.7 ,
+             23.0 ,
+             17.1 ,
+             16.8 ,
+             20.9 ,
+             19.7 ,
+             14.2,
+             18.3 ,
+             17.2,
+             18.4 ,
+             NA,
+             20.0 ,
+             NA
              ),
-  treatment = rep_len(c("admission", "sixhrs"), length(values)),
+  treatment = rep_len(c("Polluted", "Unpolluted"), length(values)),
 
 ) |> 
   relocate(treatment) |> 
