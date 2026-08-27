@@ -1,3 +1,8 @@
+#Chi-square test
+
+library(tidyverse)
+library(patchwork)
+
 chisq_tribble <- summarized_tribble |> 
   summarize(
     chisq_statistic = sum(chisq_fraction),
@@ -18,16 +23,14 @@ stacked_bar_plot <- raw_tribble |>
 chisq_distribution <- chisq_tribble |> 
   ggplot() +
   stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_tribble$df"))),
-                xlim = c(eval(parse(text = "chisq_tribble$chisq_statistic")), 30),
+                xlim = c(eval(parse(text = "chisq_tribble$chisq_statistic")), 20),
                 geom = "area", 
                 fill = "tomato", 
                 alpha = 0.5
                 ) +
   stat_function(fun = dchisq, args = list(df = eval(parse(text = "chisq_tribble$df"))), linewidth = 1, color = "blue") +
   geom_vline(aes(xintercept = chisq_statistic), color = "red", linetype = "dashed", linewidth = 1) +
-  scale_x_continuous(limits = c(0, 30))
-
-
+  scale_x_continuous(limits = c(0, 20))
 
 (bar_plot + stacked_bar_plot + chisq_distribution) + plot_layout(guides = "collect") + theme_bw()
 

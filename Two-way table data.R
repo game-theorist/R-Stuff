@@ -1,5 +1,4 @@
 library(tidyverse)
-library(patchwork)
 
 # Tribble making
 
@@ -8,10 +7,10 @@ sample_data <- tribble(~"treatment",
                        ~"failure",
                        "exposure",
                        12,
-                       5,
+                       62,
                        "non_exposure",
-                       8,
-                       25
+                       13,
+                       103
 )
 
 # Tribble cleaning
@@ -62,4 +61,3 @@ levels_response <- raw_tribble  |>
     levels_response = nlevels(response)
   ) |> 
   pull()
-
