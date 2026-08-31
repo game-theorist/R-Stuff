@@ -17,6 +17,7 @@ sample_data <- tribble(~"treatment",
                        ~"values",
                        ~"values",
                        ~"values",
+<<<<<<< HEAD
                        ~"values",
                        ~"values",
                        ~"values",
@@ -68,4 +69,9 @@ NA,
 5.208,
 4.806,
 NA)
+=======
+                       
+)
+
+>>>>>>> bf6f423fed1562f03888caa6093bc1264e974ab8
 sample_data

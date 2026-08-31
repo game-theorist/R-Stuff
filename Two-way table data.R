@@ -1,35 +1,23 @@
 library(tidyverse)
-library(patchwork)
 
 # Tribble making
 
 sample_data <- tribble(~"treatment",
-                       ~"Less than 6 hours",
-                       ~"6 to 8 hours",
-                       ~"More than 8 hours",
-                       ~"total",
-                       "Non-transportation workers",
-                       35,
-                       193,
-                       64,
-                       292,
-                       "Transportation workers",
-                       104,
-                       499,
-                       192,
-                       795,
-                       "total",
-                       139,
-                       692,
-                       256,
-                       1087
+                       ~"success",
+                       ~"failure",
+                       "exposure",
+                       12,
+                       62,
+                       "non_exposure",
+                       13,
+                       103
 )
 
 # Tribble cleaning
 
-chisq_sample <- sample_data |> 
-  select(!total) |>
-  filter(!treatment == "total") |> 
+raw_tribble <- sample_data |> 
+  #select(!total) |>
+  #filter(!treatment == "total") |> 
   pivot_longer(
     cols = !treatment,
     names_to = "response",
@@ -48,7 +36,9 @@ chisq_sample <- sample_data |>
   mutate(
     proportion = count / sum(count),
     expected_count = treatment_total * (response_total / sum(count))
-  ) |> 
+  )
+
+summarized_tribble <- raw_tribble |> 
   group_by(treatment, response) |>
   summarize(
     count = count,
@@ -60,15 +50,14 @@ chisq_sample <- sample_data |>
   ) |> 
   arrange(treatment)
 
-levels_treatment <- chisq_sample |> 
+levels_treatment <- raw_tribble  |> 
   summarize(
     levels_treatment = nlevels(treatment)
   ) |> 
   pull()
 
-levels_response <- chisq_sample |> 
+levels_response <- raw_tribble  |> 
   summarize(
     levels_response = nlevels(response)
   ) |> 
   pull()
-
