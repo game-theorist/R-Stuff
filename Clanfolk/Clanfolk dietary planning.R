@@ -49,14 +49,14 @@ extra_nutrition_necessity <- 1
 
 eaters <- tribble(
   ~"dish", ~"normal_eater", ~"fast_eater", ~"slow_eater",
-  "hearty_stew", 1, 1, 1,
-  "fish_stew", 2, 2, 2,
+  "hearty_stew", 5, 4, 2,
+  "fish_stew", 2, 0, 0,
   "haggis", 0, 0, 0,
-  "haggis_and_neeps", 1, 1, 1
+  "haggis_and_neeps", 0, 0, 0
   )
 
 nutrition_need_per_day <- eaters |> 
-  mutate(total_nutrition_need = 1800 * ((sum(normal_eater) * (5 + extra_nutrition_necessity)) + (sum(fast_eater) * (7 + extra_nutrition_necessity)) + (sum(slow_eater) * (3 + extra_nutrition_necessity)))
+  summarize(total_nutrition_need = 1800 * ((sum(normal_eater) * (5 + extra_nutrition_necessity)) + (sum(fast_eater) * (7 + extra_nutrition_necessity)) + (sum(slow_eater) * (3 + extra_nutrition_necessity)))
   ) |> 
   pull()
 
@@ -88,5 +88,4 @@ ingredients_per_day <- clanfolk_recipes |>
   select(!c(nutrition_per_unit, dish_needed_nutrition, normal_eater, fast_eater, slow_eater))
 
 ingredients_per_day
-
-nutrition_necessity_per_day
+nutrition_need_per_day
