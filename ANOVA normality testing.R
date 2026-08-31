@@ -13,7 +13,7 @@ plot_residuals <- residuals |>
   theme_bw()
 
 plot_scaled_residuals <- residuals |> 
-  ggplot(aes(sample = scaled_residual)) +
+  ggplot(aes(sample = residual)) +
   stat_pp_point() +
   stat_pp_line(color = "red") +
   coord_flip() +
